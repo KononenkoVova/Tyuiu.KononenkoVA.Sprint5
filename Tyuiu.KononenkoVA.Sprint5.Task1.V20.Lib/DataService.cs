@@ -1,5 +1,6 @@
 ﻿using tyuiu.cources.programming.interfaces.Sprint5;
 using System.Text;
+using System.Globalization;
 
 namespace Tyuiu.KononenkoVA.Sprint5.Task1.V20.Lib
 {
@@ -10,30 +11,41 @@ namespace Tyuiu.KononenkoVA.Sprint5.Task1.V20.Lib
             string path = Path.Combine(Path.GetTempPath(), "OutPutFileTask1.txt");
 
             StringBuilder sb = new StringBuilder();
+            CultureInfo culture = CultureInfo.GetCultureInfo("ru-RU");
 
             for (int x = startValue; x <= stopValue; x++)
             {
-                try
+                double denominator = Math.Sin(x) + 3;
+                double result;
+
+                if (Math.Abs(denominator) < 0.000001)
                 {
-                    double denominator = Math.Sin(x) + 3;
-
-                    if (Math.Abs(denominator) < 0.000001) 
-                    {
-                        sb.AppendLine("0.00");
-                    }
-                    else
-                    {
-                        double numerator = 5 * x + 2.5;
-                        double fraction = numerator / denominator;
-                        double result = fraction + 2 * x + Math.Cos(x);
-
-                        result = Math.Round(result, 2);
-                        sb.AppendLine(result.ToString("F2"));
-                    }
+                    result = 0;
                 }
-                catch (DivideByZeroException)
+                else
                 {
-                    sb.AppendLine("0.00");
+                    double numerator = 5 * x + 2.5;
+                    double fraction = numerator / denominator;
+                    result = fraction + 2 * x + Math.Cos(x);
+                }
+
+                result = Math.Round(result, 2);
+
+                string formattedResult = result.ToString(culture);
+                if (formattedResult.EndsWith(",00"))
+                {
+                    formattedResult = formattedResult.Substring(0, formattedResult.Length - 3);
+                }
+                else if (formattedResult.EndsWith(",0"))
+                {
+                    formattedResult = formattedResult.Substring(0, formattedResult.Length - 2);
+                }
+
+                sb.Append(formattedResult);
+
+                if (x < stopValue)
+                {
+                    sb.AppendLine();
                 }
             }
 

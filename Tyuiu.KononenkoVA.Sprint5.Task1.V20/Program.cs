@@ -1,5 +1,7 @@
 ﻿using Tyuiu.KononenkoVA.Sprint5.Task1.V20.Lib;
 using System;
+using System.Globalization;
+using System.IO;
 
 namespace Tyuiu.KononenkoVA.Sprint5.Task1.V20
 {
@@ -39,52 +41,29 @@ namespace Tyuiu.KononenkoVA.Sprint5.Task1.V20
             Console.WriteLine("* РЕЗУЛЬТАТ:                                                              *");
             Console.WriteLine("***************************************************************************");
 
-            Console.WriteLine("Таблица значений функции:");
+            string path = ds.SaveToFileTextData(startValue, stopValue);
+
+            Console.WriteLine("Содержимое файла:");
+            string fileContent = File.ReadAllText(path);
+            Console.WriteLine(fileContent);
+
+            Console.WriteLine("\nТаблица значений функции:");
             Console.WriteLine("+----------+------------+");
             Console.WriteLine("|    x     |    f(x)    |");
             Console.WriteLine("+----------+------------+");
 
-            for (int x = startValue; x <= stopValue; x += step)
+            CultureInfo culture = CultureInfo.GetCultureInfo("ru-RU");
+            string[] lines = fileContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+            for (int i = 0, x = startValue; x <= stopValue; x += step, i++)
             {
-                try
-                {
-                    double denominator = Math.Sin(x) + 3;
-                    double result;
-
-                    if (Math.Abs(denominator) < 0.000001)
-                    {
-                        result = 0;
-                    }
-                    else
-                    {
-                        double numerator = 5 * x + 2.5;
-                        double fraction = numerator / denominator;
-                        result = fraction + 2 * x + Math.Cos(x);
-                    }
-
-                    result = Math.Round(result, 2);
-                    Console.WriteLine($"| {x,8} | {result,10:F2} |");
-                }
-                catch (DivideByZeroException)
-                {
-                    Console.WriteLine($"| {x,8} | {0,10:F2} |");
-                }
+                string value = lines[i];
+                Console.WriteLine($"| {x,8} | {value,10} |");
             }
 
             Console.WriteLine("+----------+------------+");
 
-            string path = ds.SaveToFileTextData(startValue, stopValue);
-
-            Console.WriteLine();
-            Console.WriteLine("Файл сохранен: " + path);
-
-            Console.WriteLine("Содержимое файла:");
-            string[] fileContent = File.ReadAllLines(path);
-            foreach (string line in fileContent)
-            {
-                Console.WriteLine(line);
-            }
-
+            Console.WriteLine("\nФайл сохранен: " + path);
             Console.WriteLine("***************************************************************************");
             Console.ReadKey();
         }
