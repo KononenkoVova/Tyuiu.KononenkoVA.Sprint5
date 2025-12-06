@@ -1,6 +1,5 @@
 ﻿using tyuiu.cources.programming.interfaces.Sprint5;
-using System;
-using System.IO;
+using System.Globalization;
 
 namespace Tyuiu.KononenkoVA.Sprint5.Task4.V1.Lib
 {
@@ -8,10 +7,9 @@ namespace Tyuiu.KononenkoVA.Sprint5.Task4.V1.Lib
     {
         public double LoadFromDataFile(string path)
         {
+            string strX = File.ReadAllText(path).Trim();
 
-            string strX = File.ReadAllText(path);
-
-            double x = Convert.ToDouble(strX);
+            double x = double.Parse(strX, CultureInfo.InvariantCulture);
 
             double denominator = Math.Cos(x) + x;
 

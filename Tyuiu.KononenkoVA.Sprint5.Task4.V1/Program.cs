@@ -1,4 +1,7 @@
 ﻿using Tyuiu.KononenkoVA.Sprint5.Task4.V1.Lib;
+using System;
+using System.IO;
+using System.Globalization;
 
 namespace Tyuiu.KononenkoVA.Sprint5.Task4.V1
 {
@@ -24,38 +27,21 @@ namespace Tyuiu.KononenkoVA.Sprint5.Task4.V1
             Console.WriteLine("* ИСХОДНЫЕ ДАННЫЕ:                                                        *");
             Console.WriteLine("***************************************************************************");
 
-            string path = @"C:\DataSprint5\InPutDataFileTask4V1.txt";
-
-            if (!File.Exists(path))
-            {
-                path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "InPutDataFileTask4V1.txt");
-
-                if (!File.Exists(path))
-                {
-                    Console.WriteLine($"Файл не найден по пути: {path}");
-                    Console.WriteLine("Создаем тестовый файл с значением 1.5");
-
-                    string customPath = @"C:\DataSprint5\";
-                    if (!Directory.Exists(customPath))
-                    {
-                        Directory.CreateDirectory(customPath);
-                    }
-
-                    path = Path.Combine(customPath, "InPutDataFileTask4V1.txt");
-                    File.WriteAllText(path, "1.5");
-                }
-            }
+            string path = @"/app/data/AssesmentData/C#/Sprint5Task4/InPutDataFileTask4V1.txt";
 
             Console.WriteLine($"Путь к файлу: {path}");
 
             try
             {
-                string fileContent = File.ReadAllText(path);
-                Console.WriteLine($"Содержимое файла: {fileContent}");
+                string fileContent = File.ReadAllText(path).Trim();
+                Console.WriteLine($"Содержимое файла: '{fileContent}'");
+
+                Console.WriteLine($"Длина строки: {fileContent.Length}");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Ошибка при чтении файла: {ex.Message}");
+                Console.WriteLine($"Стек вызовов: {ex.StackTrace}");
             }
 
             Console.WriteLine("***************************************************************************");
@@ -66,20 +52,33 @@ namespace Tyuiu.KononenkoVA.Sprint5.Task4.V1
             {
                 double result = ds.LoadFromDataFile(path);
 
-                string strX = File.ReadAllText(path);
-                double x = Convert.ToDouble(strX);
+                string strX = File.ReadAllText(path).Trim();
+                double x = double.Parse(strX, CultureInfo.InvariantCulture);
 
                 Console.WriteLine($"Формула: y = 1/(cos(x) + x) - 4.12x");
                 Console.WriteLine($"Значение x из файла: {x}");
                 Console.WriteLine($"Результат вычисления: y = {result}");
+
+                double cosX = Math.Cos(x);
+                double denominator = cosX + x;
+                double fraction = 1.0 / denominator;
+                double product = 4.12 * x;
+
+                Console.WriteLine($"\nПромежуточные вычисления:");
+                Console.WriteLine($"cos({x}) = {cosX}");
+                Console.WriteLine($"cos({x}) + {x} = {denominator}");
+                Console.WriteLine($"1 / {denominator} = {fraction}");
+                Console.WriteLine($"4.12 * {x} = {product}");
+                Console.WriteLine($"{fraction} - {product} = {result}");
+            }
+            catch (FormatException ex)
+            {
+                Console.WriteLine($"Ошибка формата: {ex.Message}");
+                Console.WriteLine($"Убедитесь, что файл содержит число в правильном формате (например: 1.05)");
             }
             catch (DivideByZeroException ex)
             {
                 Console.WriteLine($"Ошибка: {ex.Message}");
-            }
-            catch (FormatException)
-            {
-                Console.WriteLine("Ошибка: Файл должен содержать числовое значение.");
             }
             catch (IOException ex)
             {
@@ -88,6 +87,8 @@ namespace Tyuiu.KononenkoVA.Sprint5.Task4.V1
             catch (Exception ex)
             {
                 Console.WriteLine($"Произошла ошибка: {ex.Message}");
+                Console.WriteLine($"Тип ошибки: {ex.GetType()}");
+                Console.WriteLine($"Стек вызовов: {ex.StackTrace}");
             }
 
             Console.WriteLine("***************************************************************************");
