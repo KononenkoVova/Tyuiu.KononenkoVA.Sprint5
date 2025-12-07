@@ -10,7 +10,11 @@ namespace Tyuiu.KononenkoVA.Sprint5.Task7.V21.Lib
 
             string cleanedText = new string(fileContent.Where(c => !char.IsPunctuation(c)).ToArray());
 
-            string outPath = path.Replace("InPutDataFileTask7V21.txt", "OutPutDataFileTask7V21.txt");
+            string tempDir = Path.GetTempPath();
+
+            string outFileName = "OutPutDataFileTask7V21.txt";
+
+            string outPath = Path.Combine(tempDir, outFileName);
 
             File.WriteAllText(outPath, cleanedText);
 
